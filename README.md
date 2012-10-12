@@ -19,6 +19,6 @@
 
 * Ubuntu:
 
-	`export ALT_BOOTDIR=/usr/lib/jvm/java-6-openjdk ; mkdir openjdk ; build_jdk.sh 7 openjdk`
+	`export ALT_BOOTDIR=/usr/lib/jvm/java-6-openjdk ; mkdir openjdk ; ./build_jdk.sh 7 openjdk`
 
 
