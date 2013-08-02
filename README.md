@@ -14,7 +14,9 @@
 
 	`export ALT_BOOTDIR=[JAVA_COMPILER_DIR]`
 
-	`build_jdk.sh [VERSION] [DIRECTORY_TO_STORE]`
+	`build_jdk.sh [VERSION] [DIRECTORY_TO_STORE] [BUILD_NUMBER]`
+
+    where `[BUILD_NUMBER]` reflects mercurial repository tag.
 
 	Eventually custom Certificate Authority file can be specified by:
 
@@ -28,6 +30,6 @@
 
 	`export ALT_CACERTS_FILE=/etc/ssl/certs/java/cacerts`
 
-	`mkdir openjdk ; ./build_jdk.sh 7 openjdk`
+	`mkdir openjdk ; ./build_jdk.sh 7 openjdk b32`
 
 

@@ -26,14 +26,17 @@ download(){
   return 0
 }
 
-# prepare_env [6|7|8] [repo_directory]
+# prepare_env [6|7|8] [repo_directory] [build_number]
 prepare_env(){
   echo "===>> Setting build env"
+  echo "===>> Build number: ${3}"
   unset JAVA_HOME
   export LANG=C
   export ALLOW_DOWNLOADS=true
   export EXTRA_LIBS=/usr/lib/x86_64-linux-gnu/libasound.so
   export DISABLE_HOTSPOT_OS_VERSION_CHECK=ok
+  export BUILD_NUMBER=$3
+  export JDK_BUILD_NUMBER=$3
   source $2/jdk/make/jdk_generic_profile.sh
   echo "===>> Done."
   return 0
@@ -44,9 +47,14 @@ build(){
   echo "===>> Build"
   cwd=$(pwd)
   
-  cd $1 ; make sanity
+  cd $1 ; 
+  if [ -f configure ]; then
+    bash configure  --with-cacerts-file=${ALT_CACERTS_FILE} --with-boot-jdk=${ALT_BOOTDIR} --with-build-number=${BUILD_NUMBER} --with-update-version=${BUILD_NUMBER}
+  else
+    make sanity;
+  fi
   if [ $? -ne 0 ]; then echo "Sanity check failed." ; cd ${cwd} ; return 1 ; fi 
-  make FULL_DEBUG_SYMBOLS=0
+  make all FULL_DEBUG_SYMBOLS=0
   if [ $? -ne 0 ]; then echo "Build failed." ; cd ${cwd} ; return 1 ; fi
   
   cd ${cwd}
@@ -54,12 +62,12 @@ build(){
   return 0
 }
 
-# create_jdk_archive [archive_file_name] [repo_directory]
+# create_jdk_archive [archive_file_name] [repo_directory] [version]
 create_jdk_archive(){
   echo "===>> Creating archive"
   cwd=$(pwd)
 
-  jdkDir="${2}/build/$(get_build_dir_name ${2}/build/)/j2sdk-image/"
+  jdkDir="${2}/build/$(get_build_dir_name ${2}/build/ ${3})/j2sdk-image/"
   if [ ! -d ${jdkDir} ]; then echo "Directory does not exist: ${jdkDir}" ; return 1 ; fi
   cd ${jdkDir} ;
   if [ -f release ]; then
@@ -74,9 +82,13 @@ create_jdk_archive(){
   return 0;
 }
 
-# get_build_dir_name [jdk_build_directory] - not nice solution but does the job
+# get_build_dir_name [jdk_build_directory] [version] - not nice solution but does the job
 get_build_dir_name(){
-  echo $(ls ${1});
+  if [ "$2" == "8" ]; then
+    echo "$(ls ${1})/images";
+  else
+    echo "$(ls ${1})"
+  fi
 }
 
 # for future use
@@ -96,18 +108,18 @@ get_architecture(){
   echo "amd64"
 }
 
-# do_all [6|7|8] [directory]
+# do_all [6|7|8] [directory] [build_number]
 do_all(){
   repoDir="${2}/${1}"
   if [ ! -d $2 ]; then echo "Directory does not exist: ${2}" ; return 1 ; fi
   mkdir -p ${repoDir}
   download $1 ${repoDir}
   if [ $? -ne 0 ]; then return 1 ; fi
-  prepare_env ${1} ${repoDir}
+  prepare_env ${1} ${repoDir} ${3}
   if [ $? -ne 0 ]; then return 1 ; fi
   build ${repoDir}
   if [ $? -ne 0 ]; then return 1 ; fi
-  create_jdk_archive "${2}/openjdk${1}.tar.gz" ${repoDir}
+  create_jdk_archive "${2}/openjdk${1}.${3}.tar.gz" ${repoDir} ${1}
 }
 
-do_all $1 $2;
+do_all $1 $2 $3;
