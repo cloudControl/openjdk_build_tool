@@ -18,7 +18,10 @@ download(){
   echo "Cloning ${url} to ${2}"
   hg clone ${url} ${2}
   if [ $? -ne 0 ]; then echo "Failed to clone ${url} repository." ; return 1 ; fi
-  cd ${2} ; sh "./get_source.sh"
+  cd ${2} ; 
+  echo "Checking out ${3} version"
+  hg checkout ${3}
+  sh "./get_source.sh"
   if [ $? -ne 0 ]; then echo "Failed to get jdk sources" ; cd ${cwd} ; return 1 ; fi 
   
   cd ${cwd}
@@ -113,7 +116,7 @@ do_all(){
   repoDir="${2}/${1}"
   if [ ! -d $2 ]; then echo "Directory does not exist: ${2}" ; return 1 ; fi
   mkdir -p ${repoDir}
-  download $1 ${repoDir}
+  download $1 ${repoDir} ${3}
   if [ $? -ne 0 ]; then return 1 ; fi
   prepare_env ${1} ${repoDir} ${3}
   if [ $? -ne 0 ]; then return 1 ; fi
