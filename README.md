@@ -6,7 +6,7 @@
 
 * Ubuntu:
 
-		apt-get install mercurial ant gawk g++ libcups2-dev libasound2-dev libfreetype6-dev libx11-dev libxt-dev libxext-dev libxrender-dev libxtst-dev libfontconfig1-dev lesstif2-dev
+		apt-get install mercurial ant gawk g++ libcups2-dev libasound2-dev libfreetype6-dev libx11-dev libxt-dev libxext-dev libxrender-dev libxtst-dev libfontconfig1-dev lesstif2-dev zip
 
 ##Build:
 
@@ -26,10 +26,10 @@
 
 * Ubuntu:
 
-	`export ALT_BOOTDIR=/usr/lib/jvm/java-6-openjdk`
+	`export ALT_BOOTDIR=/usr/lib/jvm/java-7-openjdk-amd64`
 
 	`export ALT_CACERTS_FILE=/etc/ssl/certs/java/cacerts`
 
-	`mkdir openjdk ; ./build_jdk.sh 7 openjdk b32`
+	`mkdir openjdk ; ./openjdk_build_tool/build_jdk.sh 7 openjdk jdk7u60-b03`
 
 
