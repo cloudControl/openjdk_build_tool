@@ -2,8 +2,8 @@
 
 #########################################################
 
-versions=(["6"]="http://hg.openjdk.java.net/jdk6/jdk6" 
-          ["7"]="http://hg.openjdk.java.net/jdk7u/jdk7u" 
+versions=(["6"]="http://hg.openjdk.java.net/jdk6/jdk6"
+          ["7"]="http://hg.openjdk.java.net/jdk7u/jdk7u"
           ["8"]="http://hg.openjdk.java.net/jdk8/jdk8")
 
 #########################################################
@@ -12,18 +12,18 @@ versions=(["6"]="http://hg.openjdk.java.net/jdk6/jdk6"
 download(){
   echo "===>> Download"
   cwd=$(pwd)
-  
+
   if [ ! -d $2 ]; then echo "Directory does not exist: ${2}" ; return 1 ; fi
   url=${versions["$1"]}
   echo "Cloning ${url} to ${2}"
   hg clone ${url} ${2}
   if [ $? -ne 0 ]; then echo "Failed to clone ${url} repository." ; return 1 ; fi
-  cd ${2} ; 
+  cd ${2} ;
   echo "Checking out ${3} version"
   hg checkout ${3}
   sh "./get_source.sh"
-  if [ $? -ne 0 ]; then echo "Failed to get jdk sources" ; cd ${cwd} ; return 1 ; fi 
-  
+  if [ $? -ne 0 ]; then echo "Failed to get jdk sources" ; cd ${cwd} ; return 1 ; fi
+
   cd ${cwd}
   echo "===>> Done."
   return 0
@@ -49,17 +49,17 @@ prepare_env(){
 build(){
   echo "===>> Build"
   cwd=$(pwd)
-  
-  cd $1 ; 
+
+  cd $1 ;
   if [ -f configure ]; then
     bash configure  --with-cacerts-file=${ALT_CACERTS_FILE} --with-boot-jdk=${ALT_BOOTDIR} --with-build-number=${BUILD_NUMBER} --with-update-version=${BUILD_NUMBER}
   else
     make sanity;
   fi
-  if [ $? -ne 0 ]; then echo "Sanity check failed." ; cd ${cwd} ; return 1 ; fi 
+  if [ $? -ne 0 ]; then echo "Sanity check failed." ; cd ${cwd} ; return 1 ; fi
   make all FULL_DEBUG_SYMBOLS=0
   if [ $? -ne 0 ]; then echo "Build failed." ; cd ${cwd} ; return 1 ; fi
-  
+
   cd ${cwd}
   echo "===>> Done."
   return 0
@@ -111,18 +111,25 @@ get_architecture(){
   echo "amd64"
 }
 
-# do_all [6|7|8] [directory] [build_number]
+# do_all [6|7|8] [directory] [build_tag]
 do_all(){
   repoDir="${2}/${1}"
   if [ ! -d $2 ]; then echo "Directory does not exist: ${2}" ; return 1 ; fi
+
+  if [ $3 == "" ]; then
+    tag = $(hg tags | awk '{print $1}' | grep jdk | head -n1);
+  else
+    tag = $3
+  fi
+
   mkdir -p ${repoDir}
-  download $1 ${repoDir} ${3}
+  download $1 ${repoDir} ${tag}
   if [ $? -ne 0 ]; then return 1 ; fi
-  prepare_env ${1} ${repoDir} ${3}
+  prepare_env ${1} ${repoDir} ${tag}
   if [ $? -ne 0 ]; then return 1 ; fi
   build ${repoDir}
   if [ $? -ne 0 ]; then return 1 ; fi
-  create_jdk_archive "${2}/openjdk${1}.${3}.tar.gz" ${repoDir} ${1}
+  create_jdk_archive "${2}/openjdk${1}.${tag}.tar.gz" ${repoDir} ${1}
 }
 
 do_all $1 $2 $3;
