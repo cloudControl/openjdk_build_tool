@@ -1,35 +1,11 @@
-##Supported OS: 
+## Supported OS:
 
 * Ubuntu
 
-##Install dependencies:
+## Suported versions:
 
-* Ubuntu:
+* 7, 8, 9
 
-		apt-get install mercurial ant gawk g++ libcups2-dev libasound2-dev libfreetype6-dev libx11-dev libxt-dev libxext-dev libxrender-dev libxtst-dev libfontconfig1-dev lesstif2-dev zip
+## Build:
 
-##Build:
-
-* Ubuntu:
-
-	`export ALT_BOOTDIR=[JAVA_COMPILER_DIR]`
-
-	`build_jdk.sh [VERSION] [DIRECTORY_TO_STORE] [BUILD_NUMBER]`
-
-    where `[BUILD_NUMBER]` reflects mercurial repository tag.
-
-	Eventually custom Certificate Authority file can be specified by:
-
-	`export ALT_CACERTS_FILE=[CUSTOM_CACERTS_FILE]`
-
-##Example:
-
-* Ubuntu:
-
-	`export ALT_BOOTDIR=/usr/lib/jvm/java-7-openjdk-amd64`
-
-	`export ALT_CACERTS_FILE=/etc/ssl/certs/java/cacerts`
-
-	`mkdir openjdk ; ./openjdk_build_tool/build_jdk.sh 7 openjdk jdk7u60-b03`
-
-
+`build.sh [7|8|9]`
