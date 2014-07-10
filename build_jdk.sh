@@ -116,7 +116,7 @@ do_all(){
   repoDir="${2}/${1}"
   if [ ! -d $2 ]; then echo "Directory does not exist: ${2}" ; return 1 ; fi
 
-  if [ $3 == "" ]; then
+  if [ -z $3 ]; then
     tag = $(hg tags | awk '{print $1}' | grep jdk | head -n1);
   else
     tag = $3
