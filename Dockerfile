@@ -9,5 +9,3 @@ ENV ALT_BOOTDIR /usr/lib/jvm/java-7-openjdk-amd64
 ENV ALT_CACERTS_FILE /etc/ssl/certs/java/cacerts
 
 VOLUME /opt/openjdk
-RUN rm -rf /opt/openjdk/*
-RUN ~/openjdk_build_tool/build_jdk.sh 7 /opt/openjdk

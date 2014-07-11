@@ -19,8 +19,16 @@ download(){
   hg clone ${url} ${2}
   if [ $? -ne 0 ]; then echo "Failed to clone ${url} repository." ; return 1 ; fi
   cd ${2} ;
-  echo "Checking out ${3} version"
-  hg checkout ${3}
+
+  if [ -z $3 ]; then
+    tag=$(hg tags | awk '{print $1}' | grep jdk | head -n1);
+  else
+    tag=$3
+  fi
+
+  export JDK_TAG="${tag}"
+  echo "===>> Checking out ${tag} version"
+  hg checkout ${tag}
   sh "./get_source.sh"
   if [ $? -ne 0 ]; then echo "Failed to get jdk sources" ; cd ${cwd} ; return 1 ; fi
 
@@ -74,9 +82,9 @@ create_jdk_archive(){
   if [ ! -d ${jdkDir} ]; then echo "Directory does not exist: ${jdkDir}" ; return 1 ; fi
   cd ${jdkDir} ;
   if [ -f release ]; then
-    tar -zcf "${cwd}/${1}" ASSEMBLY_EXCEPTION LICENSE THIRD_PARTY_README bin include jre lib release
+    tar -zcf "${1}" ASSEMBLY_EXCEPTION LICENSE THIRD_PARTY_README bin include jre lib release
   else
-    tar -zcf "${cwd}/${1}" ASSEMBLY_EXCEPTION LICENSE THIRD_PARTY_README bin include jre lib
+    tar -zcf "${1}" ASSEMBLY_EXCEPTION LICENSE THIRD_PARTY_README bin include jre lib
   fi
   if [ $? -ne 0 ]; then echo "Archive creation failed." ; cd ${cwd} ; return 1 ; fi
 
@@ -116,16 +124,10 @@ do_all(){
   repoDir="${2}/${1}"
   if [ ! -d $2 ]; then echo "Directory does not exist: ${2}" ; return 1 ; fi
 
-  if [ -z $3 ]; then
-    tag=$(hg tags | awk '{print $1}' | grep jdk | head -n1);
-  else
-    tag=$3
-  fi
-
   mkdir -p ${repoDir}
-  download $1 ${repoDir} ${tag}
+  download $1 ${repoDir} ${3}
   if [ $? -ne 0 ]; then return 1 ; fi
-  prepare_env ${1} ${repoDir} ${tag}
+  prepare_env ${1} ${repoDir} ${JDK_TAG}
   if [ $? -ne 0 ]; then return 1 ; fi
   build ${repoDir}
   if [ $? -ne 0 ]; then return 1 ; fi
