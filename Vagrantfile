@@ -14,6 +14,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provision :shell, :path => "8env.sh"
   end
 
+  config.vm.define "9" do |db|
+    config.vm.provision :shell, :path => "9env.sh"
+  end
+
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", "2048"]
   end
