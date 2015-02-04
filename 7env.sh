@@ -13,5 +13,5 @@ mkdir ~/openjdkathome
 cd ~/openjdkathome
 git clone https://github.com/hgomez/obuildfactory.git
 export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-XPACKAGE_MODE=generic XPACKAGE=true XCLEAN=true XUSE_NEW_BUILD_SYSTEM=true XBUILD=true ./obuildfactory/openjdk7/linux/standalone-job.sh
+XPACKAGE_MODE=generic XPACKAGE=true XCLEAN=true XBUILD=true ./obuildfactory/openjdk7/linux/standalone-job.sh
 cp -rf /root/openjdkathome/OBF_DROP_DIR/openjdk7 /vagrant
